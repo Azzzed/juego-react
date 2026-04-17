@@ -15,8 +15,17 @@ const Dashboard = () => {
 
   useEffect(() => {
     api.get("/auth/user")
-      .then((res) => { setUser(res.data); setLoading(false); })
-      .catch(() => { setUser(null); setLoading(false); });
+      .then((res) => {
+        if (!res.data) {
+          window.location.href = "/";
+          return;
+        }
+        setUser(res.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        window.location.href = "/";
+      });
   }, []);
 
   const fetchPokemon = async () => {
@@ -53,6 +62,10 @@ const Dashboard = () => {
     if (e.key === "Enter") handleGuess();
   };
 
+  const handleLogout = () => {
+    window.location.href = "https://obscure-space-spork-r4wq446r7r7r39w4-3000.app.github.dev/auth/logout";
+  };
+
   const getImage = () => {
     if (!pokemon) return "";
     return pokemon.sprites?.other?.dream_world?.front_default
@@ -74,25 +87,17 @@ const Dashboard = () => {
         <style>{getStyles()}</style>
         <div className="dash-container">
           <div className="grid-bg"/>
-          <div className="profile-card"><div className="spinner"/><p className="loading-text">Cargando sesión...</p></div>
+          <div className="profile-card">
+            <div className="spinner"/>
+            <p className="loading-text">Cargando sesión...</p>
+          </div>
         </div>
       </>
     );
   }
 
   if (!user) {
-    return (
-      <>
-        <style>{getStyles()}</style>
-        <div className="dash-container">
-          <div className="grid-bg"/>
-          <div className="profile-card">
-            <p className="loading-text">No se encontró sesión activa.</p>
-            <button className="new-game-btn" onClick={()=>window.location.href="/"}>Volver al inicio</button>
-          </div>
-        </div>
-      </>
-    );
+    return null;
   }
 
   return (
@@ -122,7 +127,7 @@ const Dashboard = () => {
                 <span className="mini-email">{user.emails?.[0]?.value}</span>
               </div>
             </div>
-            <button className="logout-btn" onClick={()=>window.location.href="/"}>Cerrar sesión</button>
+            <button className="logout-btn" onClick={handleLogout}>Cerrar sesión</button>
           </div>
 
           {/* Juego */}

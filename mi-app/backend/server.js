@@ -78,7 +78,17 @@ app.get("/auth/user", (req, res) => {
   res.send(req.user || null);
 });
 
+// Cerrar sesión
+app.get("/auth/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) return res.status(500).send("Error al cerrar sesión");
+    req.session.destroy(() => {
+      res.redirect("https://obscure-space-spork-r4wq446r7r7r39w4-5173.app.github.dev");
+    });
+  });
+});
+
 // Inicio del Servidor
 // Puerto
 const PORT = 3000;
-app.listen(PORT, () => console.log(`Servidor backend corriendo en https://obscure-space-spork-r4wq446r7r7r39w4-3000.app.github.dev:${PORT}`)); // Inicia el servidor.
+app.listen(PORT, "0.0.0.0", () => console.log(`Servidor backend corriendo en puerto ${PORT}`));
